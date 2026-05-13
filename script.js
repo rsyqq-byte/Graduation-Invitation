@@ -213,7 +213,7 @@ function showResultMessage(status = 'online', reason = '') {
 }
 
 // Send RSVP data to online endpoint if configured
-/*async function sendRSVPDataOnline(data) {
+async function sendRSVPDataOnline(data) {
     if (!RSVP_ENDPOINT) {
         console.warn('RSVP endpoint tidak dikonfigurasi. Data hanya disimpan lokal.');
         return { ok: false, reason: 'Endpoint belum dikonfigurasi.' };
@@ -227,35 +227,9 @@ function showResultMessage(status = 'online', reason = '') {
             headers: {
                 'Accept': 'application/json'
             },
-            body: formBody
-        });*/
-
-async function sendRSVPDataOnline(data) {
-    if (!RSVP_ENDPOINT) {
-        console.warn('RSVP endpoint tidak dikonfigurasi. Data hanya disimpan lokal.');
-        return { ok: false, reason: 'Endpoint belum dikonfigurasi.' };
-    }
-
-    try {
-        console.log('Sending RSVP data to online endpoint:', data);
-        const formBody = new URLSearchParams(data);
-        const response = await fetch(RSVP_ENDPOINT, {
-            method: 'POST',
-            mode: 'no-cors', // ← Tambahkan ini
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            body: formBody
+            body: formBody,
+            mode: 'cors'
         });
-
-        // no-cors tidak bisa baca response, jadi anggap sukses
-        return { ok: true };
-
-    } catch (error) {
-        console.error('Error sending RSVP online:', error);
-        return { ok: false, reason: error.message };
-    }
-}
 
         if (!response.ok) {
             const text = await response.text();
@@ -280,9 +254,49 @@ async function sendRSVPDataOnline(data) {
         console.log('Online RSVP berhasil:', result);
         return { ok: true };
     } catch (error) {
-        console.error('Error sending RSVP online:', error);
+        console.warn('Fetch gagal, mencoba fallback form submit:', error.message || error);
+        const fallback = await sendRSVPDataOnlineByForm(data);
+        if (fallback) {
+            return { ok: true, reason: 'Data dikirim via fallback form submit.' };
+        }
         return { ok: false, reason: error.message || 'Kesalahan jaringan saat mengirim data.' };
     }
+}
+
+function sendRSVPDataOnlineByForm(data) {
+    return new Promise((resolve) => {
+        const iframeName = 'rsvpEndpointFrame';
+        let iframe = document.getElementById(iframeName);
+        if (!iframe) {
+            iframe = document.createElement('iframe');
+            iframe.name = iframeName;
+            iframe.id = iframeName;
+            iframe.style.display = 'none';
+            document.body.appendChild(iframe);
+        }
+
+        const form = document.createElement('form');
+        form.action = RSVP_ENDPOINT;
+        form.method = 'POST';
+        form.target = iframeName;
+        form.style.display = 'none';
+
+        Object.entries(data).forEach(([name, value]) => {
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = name;
+            input.value = value || '';
+            form.appendChild(input);
+        });
+
+        document.body.appendChild(form);
+        form.submit();
+
+        setTimeout(() => {
+            document.body.removeChild(form);
+            resolve(true);
+        }, 1500);
+    });
 }
 
 // Optional: Function to view all RSVPs (for admin purposes)
