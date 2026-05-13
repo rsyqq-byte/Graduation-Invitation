@@ -1,5 +1,5 @@
 // RSVP Form Handling
-const RSVP_ENDPOINT = 'https://script.google.com/macros/s/AKfycbzRciCUoPPNx3PgT0khVIWjegICML0wBeeCBG5CDHZUbXxKJVTRBcp7i1pG6u0MRRXT/exec'; // Masukkan URL Google Apps Script atau endpoint server di sini
+const RSVP_ENDPOINT = 'https://script.google.com/macros/s/AKfycbz7eNUc6KjB8wmbq3as0YFxtwAo8QhUUha0i9-r1eCkEWwQO0ltqNq91Sve6VwM0uUp/exec'; // Masukkan URL Google Apps Script atau endpoint server di sini
 
 document.addEventListener('DOMContentLoaded', function() {
     // Envelope opening animation
@@ -214,25 +214,37 @@ async function sendRSVPDataOnline(data) {
     }
 
     try {
+        console.log('Sending RSVP data to online endpoint:', data);
         const response = await fetch(RSVP_ENDPOINT, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
             },
             body: JSON.stringify(data)
         });
 
         if (!response.ok) {
-            console.error('Online RSVP gagal:', response.status, response.statusText);
+            const text = await response.text();
+            console.error('Online RSVP gagal:', response.status, response.statusText, text);
             return false;
         }
 
-        const result = await response.json();
+        let result;
+        try {
+            result = await response.json();
+        } catch (parseError) {
+            const text = await response.text();
+            console.error('Gagal membaca respon JSON dari endpoint:', parseError, text);
+            return false;
+        }
+
         if (result && result.success === false) {
             console.error('Online RSVP response error:', result);
             return false;
         }
 
+        console.log('Online RSVP berhasil:', result);
         return true;
     } catch (error) {
         console.error('Error sending RSVP online:', error);
