@@ -213,7 +213,7 @@ function showResultMessage(status = 'online', reason = '') {
 }
 
 // Send RSVP data to online endpoint if configured
-async function sendRSVPDataOnline(data) {
+/*async function sendRSVPDataOnline(data) {
     if (!RSVP_ENDPOINT) {
         console.warn('RSVP endpoint tidak dikonfigurasi. Data hanya disimpan lokal.');
         return { ok: false, reason: 'Endpoint belum dikonfigurasi.' };
@@ -228,7 +228,34 @@ async function sendRSVPDataOnline(data) {
                 'Accept': 'application/json'
             },
             body: formBody
+        });*/
+
+async function sendRSVPDataOnline(data) {
+    if (!RSVP_ENDPOINT) {
+        console.warn('RSVP endpoint tidak dikonfigurasi. Data hanya disimpan lokal.');
+        return { ok: false, reason: 'Endpoint belum dikonfigurasi.' };
+    }
+
+    try {
+        console.log('Sending RSVP data to online endpoint:', data);
+        const formBody = new URLSearchParams(data);
+        const response = await fetch(RSVP_ENDPOINT, {
+            method: 'POST',
+            mode: 'no-cors', // ← Tambahkan ini
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: formBody
         });
+
+        // no-cors tidak bisa baca response, jadi anggap sukses
+        return { ok: true };
+
+    } catch (error) {
+        console.error('Error sending RSVP online:', error);
+        return { ok: false, reason: error.message };
+    }
+}
 
         if (!response.ok) {
             const text = await response.text();
