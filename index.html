@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Graduation Ceremony Invitation</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Wayang Overlay Gate -->
+    <div id="wayangOverlay" class="wayang-overlay closed">
+        <div class="gate gate-left">
+            <img src="img/kiri.jpg" alt="Wayang Kiri">
+        </div>
+        <div class="gate gate-right">
+            <img src="img/kanan.jpg" alt="Wayang Kanan">
+        </div>
+    </div>
+
+    <!-- Envelope/Letter Opening Animation -->
+    <div id="envelope" class="envelope">
+        <div class="envelope-flap"></div>
+        <div class="envelope-body">
+            <div class="letter">
+                <img id="letterImage" class="letter-image" src="img/surat1.jpg" alt="Surat Undangan 1">
+                <div class="letter-hint">Tap surat untuk membuka</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content (Hidden initially) -->
+    <div id="main-content" class="main-content hidden">
+        <!-- Sections -->
+        <div id="opening" class="section active">
+            <div class="container">
+                <header class="header header-opening">
+                    <div class="header-content">
+                        <h1 class="title">Undangan Graduation</h1>
+                        <p class="subtitle">Selamat datang di undangan digital kami</p>
+                    </div>
+                </header>
+
+                <main class="main-content-inner">
+                    <section class="welcome-section welcome-opening">
+                        <p class="greeting">Assalamualaikum Warahmatullahi Wabarakatuh</p>
+                        <p class="message">
+                            Dengan hormat, kami mengundang Bapak/Ibu/Saudara/i untuk hadir dalam acara Wisuda Tahun 2026.
+                            Terima kasih atas perhatian dan doa yang diberikan untuk para peserta didik kami.
+                        </p>
+                        <div class="opening-card">
+                            <h2>Gryffindor Smada</h2>
+                            <p>Angkatan XXVI Tahun 2024 / 2026</p>
+                            <span class="opening-badge">Tamu Undangan</span>
+                        </div>
+                    </section>
+                </main>
+
+                <footer class="footer">
+                    <p>&copy; 2026 School Graduation Ceremony.</p>
+                </footer>
+            </div>
+        </div>
+
+        <div id="acara" class="section">
+            <div class="container">
+                <!-- Header Section -->
+                <header class="header">
+                    <div class="header-content">
+                        <h1 class="title">Acara</h1>
+                        <p class="subtitle">Detail acara dan informasi penting</p>
+                    </div>
+                </header>
+
+                <!-- Main Invitation Content -->
+                <main class="main-content-inner">
+                    <!-- Welcome Message -->
+                    <section class="welcome-section">
+                        <p class="greeting">Kepada Para Wali Murid dan Guru yang Terhormat</p>
+                        <p class="message">
+                            Kami dengan senang hati mengundang Anda untuk merayakan pencapaian luar biasa dari para siswa yang akan lulus. Bergabunglah bersama kami dalam hari yang tak terlupakan saat kami menghormati dedikasi, kerja keras, dan masa depan cerah mereka.
+                        </p>
+                    </section>
+
+                    <!-- Event Details -->
+                    <section class="event-details">
+                        <div class="detail-card">
+                            <div class="detail-icon">📅</div>
+                            <div class="detail-content">
+                                <h3>Tanggal</h3>
+                                <p>April 16, 2026</p>
+                            </div>
+                        </div>
+
+                        <div class="detail-card">
+                            <div class="detail-icon">🕐</div>
+                            <div class="detail-content">
+                                <h3>Waktu</h3>
+                                <p>08:00 AM - 1:00 PM</p>
+                            </div>
+                        </div>
+
+                        <div class="detail-card">
+                            <div class="detail-icon">📍</div>
+                            <div class="detail-content">
+                                <h3>Lokasi</h3>
+                                <p>Aula Asmi Hotel<br>___________</p>
+                            </div>
+                        </div>
+
+                        <div class="detail-card">
+                            <div class="detail-icon">🎓</div>
+                            <div class="detail-content">
+                                <h3>Dress Code</h3>
+                                <p>Pakaian Formal</p>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Important Information -->
+                    <section class="info-section">
+                        <h2>Informasi Penting</h2>
+                        <div class="info-list">
+                            <div class="info-item">
+                                <h4>📌 Parkir</h4>
+                                <p>Tempat parkir yang cukup tersedia di area Asmi Hotel. Harap tiba tepat waktu.</p>
+                            </div>
+                            <div class="info-item">
+                                <h4>🎟️ Masuk</h4>
+                                <p>Undangan cetak atau konfirmasi digital wajib ditunjukkan sebagai syarat masuk.</p>
+                            </div>
+                            <div class="info-item">
+                                <h4>🚫 Fotografi</h4>
+                                <p>Dokumentasi profesional akan dilakukan selama acara berlangsung. Pengambilan foto pribadi diperbolehkan saat sesi resepsi.</p>
+                            </div>
+                            <div class="info-item">
+                                <h4>❓ Pertanyaan?</h4>
+                                <p>Hubungi: gryffindorsmada3@gmail.com | Phone: +62 123 1234 1234</p>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- RSVP Section -->
+                    <section class="rsvp-section">
+                        <h2>Mohon Konfirmasi Kehadiran Sebelum 16 April 2026</h2>
+                        <form class="rsvp-form" id="rsvpForm">
+                            <div class="form-group">
+                                <label for="fullName">Nama Lengkap *</label>
+                                <input type="text" id="fullName" name="fullName" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="relationship">Hubungan dengan Siswa/Siswi *</label>
+                                <select id="relationship" name="relationship" required>
+                                    <option value="">Pilih Hubungan</option>
+                                    <option value="Parent">Orang Tua/Wali</option>
+                                    <option value="Teacher">Guru/Pendidik</option>
+                                    <option value="Family">Keluarga Besar</option>
+                                    <option value="Other">Lainnya</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="studentName">Nama Siswa/Siswi</label>
+                                <input type="text" id="studentName" name="studentName">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="attendance">Apakah Anda Akan Hadir? *</label>
+                                <div class="radio-group">
+                                    <input type="radio" id="attending" name="attendance" value="Yes" required>
+                                    <label for="attending" class="radio-label">Ya, saya akan hadir</label>
+                                    
+                                    <input type="radio" id="notAttending" name="attendance" value="No">
+                                    <label for="notAttending" class="radio-label">Tidak, saya tidak dapat hadir</label>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="message">Pesan Khusus untuk Siswa/Siswi (Opsional)</label>
+                                <textarea id="message" name="message" rows="3" placeholder="Bagikan pesan ucapan selamat Anda..."></textarea>
+                            </div>
+
+                            <button type="submit" class="submit-btn">Kirim Konfirmasi Kehadiran</button>
+                            <div id="formMessage" class="form-message"></div>
+                        </form>
+                    </section>
+                </main>
+
+                <!-- Footer -->
+                <footer class="footer">
+                    <p>&copy; 2026 School Graduation Ceremony. All rights reserved.</p>
+                    <p>Ini merupakan momen istimewa yang merayakan keunggulan dan pencapaian.</p>
+                </footer>
+            </div>
+        </div>
+
+        <div id="catatan" class="section">
+            <div class="container">
+                <header class="header">
+                    <div class="header-content">
+                        <h1 class="title">Catatan</h1>
+                        <p class="subtitle">Pesan dan pengingat penting</p>
+                    </div>
+                </header>
+
+                <main class="main-content-inner">
+                    <section class="note-section">
+                        <div class="note-card">
+                            <h2>Pesan Khusus</h2>
+                            <p>Terima kasih atas kehadiran Anda. Semoga acara ini menjadi kenangan manis bagi semua pihak.</p>
+                        </div>
+                        <div class="note-card">
+                            <h2>Harap Datang</h2>
+                            <p>Mohon hadir 15 menit lebih awal untuk registrasi dan persiapan duduk.</p>
+                        </div>
+                        <div class="note-card">
+                            <h2>Kontak</h2>
+                            <p>Hubungi panitia jika ada pertanyaan: gryffindorsmada3@gmail.com | Phone: +62 123 1234 1234.</p>
+                        </div>
+                    </section>
+                </main>
+
+                <footer class="footer">
+                    <p>&copy; 2026 School Graduation Ceremony.</p>
+                </footer>
+            </div>
+        </div>
+
+        <div id="rundown" class="section">
+            <div class="container">
+                <header class="header">
+                    <div class="header-content">
+                        <h1 class="title">Rundown</h1>
+                        <p class="subtitle">Jadwal lengkap acara</p>
+                    </div>
+                </header>
+
+                <main class="main-content-inner">
+                    <!-- Program Details -->
+                    <section class="program-section">
+                        <h2>Ceremony Program</h2>
+                        <div class="program-list">
+                            <div class="program-item">
+                                <span class="time">10:00 AM</span>
+                                <span class="event">Guests Arrival & Registration</span>
+                            </div>
+                            <div class="program-item">
+                                <span class="time">10:30 AM</span>
+                                <span class="event">Opening Ceremony</span>
+                            </div>
+                            <div class="program-item">
+                                <span class="time">10:45 AM</span>
+                                <span class="event">Principal's Address</span>
+                            </div>
+                            <div class="program-item">
+                                <span class="time">11:15 AM</span>
+                                <span class="event">Diploma Presentation & Graduates Recognition</span>
+                            </div>
+                            <div class="program-item">
+                                <span class="time">12:15 PM</span>
+                                <span class="event">Farewell Performance</span>
+                            </div>
+                            <div class="program-item">
+                                <span class="time">12:45 PM</span>
+                                <span class="event">Reception & Refreshments</span>
+                            </div>
+                        </div>
+                    </section>
+                </main>
+
+                <footer class="footer">
+                    <p>&copy; 2026 School Graduation Ceremony. All rights reserved.</p>
+                </footer>
+            </div>
+        </div>
+
+        <div id="gallery" class="section">
+            <div class="container">
+                <header class="header">
+                    <div class="header-content">
+                        <h1 class="title">Gallery</h1>
+                        <p class="subtitle">Moment-moment Wisuda</p>
+                    </div>
+                </header>
+
+                <main class="main-content-inner">
+                    <section class="gallery-section">
+                        <div class="gallery-grid">
+                            <div class="gallery-item">
+                                <img src="img/gambar1.jpg" alt="Graduation Photo 1">
+                            </div>
+                            <div class="gallery-item">
+                                <img src="img/gambar2.jpg" alt="Graduation Photo 2">
+                            </div>
+                            <div class="gallery-item">
+                                <img src="https://via.placeholder.com/300x200/667eea/ffffff?text=Graduation+3" alt="Graduation Photo 3">
+                            </div>
+                            <div class="gallery-item">
+                                <img src="https://via.placeholder.com/300x200/764ba2/ffffff?text=Graduation+4" alt="Graduation Photo 4">
+                            </div>
+                            <div class="gallery-item">
+                                <img src="https://via.placeholder.com/300x200/667eea/ffffff?text=Graduation+5" alt="Graduation Photo 5">
+                            </div>
+                            <div class="gallery-item">
+                                <img src="https://via.placeholder.com/300x200/764ba2/ffffff?text=Graduation+6" alt="Graduation Photo 6">
+                            </div>
+                        </div>
+                    </section>
+                </main>
+
+                <footer class="footer">
+                    <p>&copy; 2026 School Graduation Ceremony. All rights reserved.</p>
+                </footer>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation Menu -->
+    <nav class="nav-menu hidden">
+        <button class="nav-btn active" data-section="opening">
+            <span class="nav-icon">🏠</span>
+            <span class="nav-text">Opening</span>
+        </button>
+        <button class="nav-btn" data-section="acara">
+            <span class="nav-icon">📝</span>
+            <span class="nav-text">Acara</span>
+        </button>
+        <button class="nav-btn" data-section="catatan">
+            <span class="nav-icon">🗒️</span>
+            <span class="nav-text">Catatan</span>
+        </button>
+        <button class="nav-btn" data-section="rundown">
+            <span class="nav-icon">🕐</span>
+            <span class="nav-text">Rundown</span>
+        </button>
+        <button class="nav-btn" data-section="gallery">
+            <span class="nav-icon">🖼️</span>
+            <span class="nav-text">Gallery</span>
+        </button>
+    </nav>
+
+    <script src="script.js"></script>
+</body>
+</html>
