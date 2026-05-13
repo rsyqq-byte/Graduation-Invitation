@@ -1,17 +1,17 @@
 // RSVP Form Handling
 const RSVP_ENDPOINT = 'https://script.google.com/macros/s/AKfycbz1kZLeI79nlfKENQ1_rQ5D6hjTNFQiKQ40TYUzmLfoSM6b0pNYt5ZtWjV-qNM0zraA/exec'; // Masukkan URL Google Apps Script atau endpoint server di sini
-
+ 
 document.addEventListener('DOMContentLoaded', function() {
     // Envelope opening animation
     const envelope = document.getElementById('envelope');
     const mainContent = document.getElementById('main-content');
     const navMenu = document.querySelector('.nav-menu');
-
+ 
     const letterImage = document.getElementById('letterImage');
     const letterHint = document.querySelector('.letter-hint');
     const wayangOverlay = document.getElementById('wayangOverlay');
     let envelopeOpened = false;
-
+ 
     function openWayangOverlay() {
         if (!wayangOverlay) return;
         setTimeout(() => {
@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 wayangOverlay.classList.add('open');
             });
         }, 600);
-
+ 
         setTimeout(() => {
             if (wayangOverlay) {
                 wayangOverlay.classList.add('hidden');
@@ -28,7 +28,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }, 2400);
     }
-
+ 
     function openEnvelopeAnimation() {
         if (envelopeOpened) return;
         envelopeOpened = true;
@@ -49,7 +49,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (letterImage) {
             letterImage.classList.add('letter-zoom');
         }
-
+ 
         setTimeout(() => {
             envelope.style.display = 'none';
             mainContent.classList.remove('hidden');
@@ -58,28 +58,28 @@ document.addEventListener('DOMContentLoaded', function() {
             }, 200);
         }, 1550);
     }
-
+ 
     if (wayangOverlay) {
         openWayangOverlay();
     }
-
+ 
     if (letterImage) {
         letterImage.addEventListener('click', openEnvelopeAnimation);
     } else if (envelope) {
         envelope.addEventListener('click', openEnvelopeAnimation);
     }
-
+ 
     // Navigation tabs
     const navButtons = document.querySelectorAll('.nav-btn');
     const sections = document.querySelectorAll('.section');
-
+ 
     navButtons.forEach(button => {
         button.addEventListener('click', function() {
             // Remove active class from all buttons
             navButtons.forEach(btn => btn.classList.remove('active'));
             // Add active class to clicked button
             this.classList.add('active');
-
+ 
             // Hide all sections
             sections.forEach(section => section.classList.remove('active'));
             // Show selected section
@@ -90,17 +90,17 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
-
+ 
     const form = document.getElementById('rsvpForm');
     const formMessage = document.getElementById('formMessage');
-
+ 
     if (form) {
         form.addEventListener('submit', function(e) {
             e.preventDefault();
             handleFormSubmit();
         });
     }
-
+ 
     // Add smooth scroll behavior
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function(e) {
@@ -111,15 +111,15 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
-
+ 
     // Form validation
     const fullName = document.getElementById('fullName');
-
+ 
     if (fullName) {
         fullName.addEventListener('blur', validateName);
     }
 });
-
+ 
 // Validate Full Name
 function validateName() {
     const fullName = document.getElementById('fullName');
@@ -133,7 +133,7 @@ function validateName() {
         return true;
     }
 }
-
+ 
 // Handle Form Submission
 async function handleFormSubmit() {
     const form = document.getElementById('rsvpForm');
@@ -142,14 +142,14 @@ async function handleFormSubmit() {
     // Clear previous messages
     formMessage.textContent = '';
     formMessage.classList.remove('success', 'error');
-
+ 
     // Validate required field
     if (!validateName()) {
         formMessage.textContent = 'Please enter your full name.';
         formMessage.classList.add('error');
         return;
     }
-
+ 
     // Get form data
     const formData = new FormData(form);
     const data = {
@@ -160,7 +160,7 @@ async function handleFormSubmit() {
         message: formData.get('message'),
         submittedAt: new Date().toISOString()
     };
-
+ 
     // Save to localStorage as a backup
     try {
         let responses = JSON.parse(localStorage.getItem('graduationRSVPs')) || [];
@@ -169,13 +169,16 @@ async function handleFormSubmit() {
     } catch (error) {
         console.error('Error saving RSVP locally:', error);
     }
-
+ 
+    // Simpan nama sebelum form direset
+    const submittedName = data.fullName;
+ 
     const onlineResult = await sendRSVPDataOnline(data);
-
+ 
     if (onlineResult.ok) {
-        showResultMessage('online');
+        showResultMessage('online', '', submittedName);
     } else {
-        showResultMessage('offline', onlineResult.reason);
+        showResultMessage('offline', onlineResult.reason, submittedName);
     }
     
     // Reset form
@@ -184,85 +187,93 @@ async function handleFormSubmit() {
     // Reset border color
     document.getElementById('fullName').style.borderColor = '#e0e0e0';
 }
-
+ 
 // Show result message
-function showResultMessage(status = 'online', reason = '') {
+function showResultMessage(status = 'online', reason = '', submittedName = '') {
     const formMessage = document.getElementById('formMessage');
-    const fullName = document.getElementById('fullName').value;
-    
+ 
     if (status === 'online') {
         formMessage.innerHTML = `
-            <p>✓ Terima kasih, <strong>${fullName}</strong>!</p>
+            <p>✓ Terima kasih, <strong>${submittedName}</strong>!</p>
             <p>Data Anda telah tersimpan secara online.</p>
+            <div style="margin-top: 16px; text-align: center;">
+                <p style="font-weight: bold; margin-bottom: 10px; font-size: 15px;">📩 Silakan Download Undangan Anda:</p>
+                <img 
+                    src="img/undangan.jpg" 
+                    alt="Undangan Wisuda" 
+                    style="
+                        width: 100%;
+                        border-radius: 12px;
+                        margin-bottom: 12px;
+                        box-shadow: 0 4px 16px rgba(0,0,0,0.25);
+                        display: block;
+                    "
+                >
+                <a 
+                    href="img/undangan.jpg" 
+                    download="Undangan_Wisuda.jpg" 
+                    style="
+                        display: block;
+                        text-align: center;
+                        background: linear-gradient(135deg, #7c3aed, #a855f7);
+                        color: white;
+                        padding: 13px;
+                        border-radius: 10px;
+                        text-decoration: none;
+                        font-weight: bold;
+                        font-size: 15px;
+                        letter-spacing: 0.3px;
+                        box-shadow: 0 4px 12px rgba(124, 58, 237, 0.4);
+                    "
+                >⬇️ Download Undangan</a>
+            </div>
         `;
         formMessage.classList.add('success');
     } else {
         formMessage.innerHTML = `
-            <p>⚠️ Terima kasih, <strong>${fullName}</strong>.</p>
+            <p>⚠️ Terima kasih, <strong>${submittedName}</strong>.</p>
             <p>Data Anda tersimpan sebagai cadangan lokal.</p>
             <p><strong>Alasan:</strong> ${reason || 'Tidak dapat menghubungi server online.'}</p>
             <p>Silakan periksa koneksi atau konfigurasi endpoint.</p>
         `;
         formMessage.classList.add('error');
     }
-
+ 
     // Scroll to message
     setTimeout(() => {
         formMessage.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }, 100);
 }
-
+ 
 // Send RSVP data to online endpoint if configured
 async function sendRSVPDataOnline(data) {
     if (!RSVP_ENDPOINT) {
         console.warn('RSVP endpoint tidak dikonfigurasi. Data hanya disimpan lokal.');
         return { ok: false, reason: 'Endpoint belum dikonfigurasi.' };
     }
-
+ 
     try {
         console.log('Sending RSVP data to online endpoint:', data);
         const formBody = new URLSearchParams(data);
         const response = await fetch(RSVP_ENDPOINT, {
             method: 'POST',
+            mode: 'no-cors', // Menghindari CORS error pada Google Apps Script
             headers: {
-                'Accept': 'application/json'
+                'Content-Type': 'application/x-www-form-urlencoded',
             },
-            body: formBody,
-            mode: 'cors'
+            body: formBody
         });
-
-        if (!response.ok) {
-            const text = await response.text();
-            console.error('Online RSVP gagal:', response.status, response.statusText, text);
-            return { ok: false, reason: `Status ${response.status}: ${response.statusText}` };
-        }
-
-        let result;
-        try {
-            result = await response.json();
-        } catch (parseError) {
-            const text = await response.text();
-            console.error('Gagal membaca respon JSON dari endpoint:', parseError, text);
-            return { ok: false, reason: 'Respon server tidak valid (bukan JSON).' };
-        }
-
-        if (result && result.success === false) {
-            console.error('Online RSVP response error:', result);
-            return { ok: false, reason: result.error || 'Server mengembalikan success=false.' };
-        }
-
-        console.log('Online RSVP berhasil:', result);
+ 
+        // no-cors tidak bisa baca response, anggap sukses jika tidak ada error
+        console.log('Online RSVP berhasil dikirim.');
         return { ok: true };
+ 
     } catch (error) {
-        console.warn('Fetch gagal, mencoba fallback form submit:', error.message || error);
-        const fallback = await sendRSVPDataOnlineByForm(data);
-        if (fallback) {
-            return { ok: true, reason: 'Data dikirim via fallback form submit.' };
-        }
+        console.error('Error sending RSVP online:', error);
         return { ok: false, reason: error.message || 'Kesalahan jaringan saat mengirim data.' };
     }
 }
-
+ 
 function sendRSVPDataOnlineByForm(data) {
     return new Promise((resolve) => {
         const iframeName = 'rsvpEndpointFrame';
@@ -274,13 +285,13 @@ function sendRSVPDataOnlineByForm(data) {
             iframe.style.display = 'none';
             document.body.appendChild(iframe);
         }
-
+ 
         const form = document.createElement('form');
         form.action = RSVP_ENDPOINT;
         form.method = 'POST';
         form.target = iframeName;
         form.style.display = 'none';
-
+ 
         Object.entries(data).forEach(([name, value]) => {
             const input = document.createElement('input');
             input.type = 'hidden';
@@ -288,17 +299,17 @@ function sendRSVPDataOnlineByForm(data) {
             input.value = value || '';
             form.appendChild(input);
         });
-
+ 
         document.body.appendChild(form);
         form.submit();
-
+ 
         setTimeout(() => {
             document.body.removeChild(form);
             resolve(true);
         }, 1500);
     });
 }
-
+ 
 // Optional: Function to view all RSVPs (for admin purposes)
 function viewAllRSVPs() {
     try {
@@ -319,7 +330,7 @@ function viewAllRSVPs() {
         return [];
     }
 }
-
+ 
 // Optional: Function to clear all RSVPs (use with caution)
 function clearAllRSVPs() {
     if (confirm('Are you sure you want to clear all RSVPs? This action cannot be undone.')) {
@@ -327,7 +338,7 @@ function clearAllRSVPs() {
         console.log('All RSVPs have been cleared.');
     }
 }
-
+ 
 // Optional: Export RSVPs as CSV
 function exportRSVPsAsCSV() {
     try {
@@ -337,11 +348,11 @@ function exportRSVPsAsCSV() {
             alert('No RSVPs to export.');
             return;
         }
-
+ 
         // Create CSV headers
         const headers = Object.keys(responses[0]);
         let csv = headers.join(',') + '\n';
-
+ 
         // Add data rows
         responses.forEach(response => {
             const row = headers.map(header => {
@@ -353,7 +364,7 @@ function exportRSVPsAsCSV() {
             });
             csv += row.join(',') + '\n';
         });
-
+ 
         // Create blob and download
         const blob = new Blob([csv], { type: 'text/csv' });
         const url = window.URL.createObjectURL(blob);
@@ -364,13 +375,13 @@ function exportRSVPsAsCSV() {
         a.click();
         window.URL.revokeObjectURL(url);
         document.body.removeChild(a);
-
+ 
         console.log(`Exported ${responses.length} RSVPs.`);
     } catch (error) {
         console.error('Error exporting RSVPs:', error);
     }
 }
-
+ 
 // Add number formatting for phone input
 document.addEventListener('DOMContentLoaded', function() {
     const phoneInput = document.getElementById('phone');
@@ -381,15 +392,16 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 });
-
+ 
 // Make functions available in console for admin use
 window.RSVPAdmin = {
     viewAll: viewAllRSVPs,
     clear: clearAllRSVPs,
     export: exportRSVPsAsCSV
 };
-
+ 
 console.log('RSVP Management Functions Available:');
 console.log('Use RSVPAdmin.viewAll() to see all RSVPs');
 console.log('Use RSVPAdmin.export() to export RSVPs as CSV');
 console.log('Use RSVPAdmin.clear() to clear all RSVPs');
+ 
