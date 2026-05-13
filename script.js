@@ -1,4 +1,6 @@
 // RSVP Form Handling
+const RSVP_ENDPOINT = 'https://script.google.com/macros/s/AKfycbzRciCUoPPNx3PgT0khVIWjegICML0wBeeCBG5CDHZUbXxKJVTRBcp7i1pG6u0MRRXT/exec'; // Masukkan URL Google Apps Script atau endpoint server di sini
+
 document.addEventListener('DOMContentLoaded', function() {
     // Envelope opening animation
     const envelope = document.getElementById('envelope');
@@ -133,7 +135,7 @@ function validateName() {
 }
 
 // Handle Form Submission
-function handleFormSubmit() {
+async function handleFormSubmit() {
     const form = document.getElementById('rsvpForm');
     const formMessage = document.getElementById('formMessage');
     
@@ -159,36 +161,42 @@ function handleFormSubmit() {
         submittedAt: new Date().toISOString()
     };
 
-    // Save to localStorage
+    // Save to localStorage as a backup
     try {
         let responses = JSON.parse(localStorage.getItem('graduationRSVPs')) || [];
         responses.push(data);
         localStorage.setItem('graduationRSVPs', JSON.stringify(responses));
-
-        // Show success message
-        showSuccessMessage();
-        
-        // Reset form
-        form.reset();
-        
-        // Reset border color
-        document.getElementById('fullName').style.borderColor = '#e0e0e0';
-
     } catch (error) {
-        console.error('Error saving RSVP:', error);
-        formMessage.textContent = 'An error occurred. Please try again.';
-        formMessage.classList.add('error');
+        console.error('Error saving RSVP locally:', error);
     }
+
+    const isOnlineSaved = await sendRSVPDataOnline(data);
+
+    if (isOnlineSaved) {
+        showSuccessMessage('online');
+    } else {
+        showSuccessMessage('offline');
+    }
+    
+    // Reset form
+    form.reset();
+    
+    // Reset border color
+    document.getElementById('fullName').style.borderColor = '#e0e0e0';
 }
 
 // Show Success Message
-function showSuccessMessage() {
+function showSuccessMessage(status = 'online') {
     const formMessage = document.getElementById('formMessage');
     const fullName = document.getElementById('fullName').value;
     
+    const statusMessage = status === 'online'
+        ? 'Data Anda telah tersimpan secara online.'
+        : 'Data disimpan sebagai cadangan lokal. Coba lagi jika koneksi bermasalah.';
+
     formMessage.innerHTML = `
-        <p>✓ Thank you, <strong>${fullName}</strong>!</p>
-        <p>Your RSVP has been received. We look forward to seeing you at the graduation ceremony.</p>
+        <p>✓ Terima kasih, <strong>${fullName}</strong>!</p>
+        <p>Konfirmasi Anda telah diterima. ${statusMessage}</p>
     `;
     formMessage.classList.add('success');
 
@@ -196,6 +204,40 @@ function showSuccessMessage() {
     setTimeout(() => {
         formMessage.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }, 100);
+}
+
+// Send RSVP data to online endpoint if configured
+async function sendRSVPDataOnline(data) {
+    if (!RSVP_ENDPOINT) {
+        console.warn('RSVP endpoint tidak dikonfigurasi. Data hanya disimpan lokal.');
+        return false;
+    }
+
+    try {
+        const response = await fetch(RSVP_ENDPOINT, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        });
+
+        if (!response.ok) {
+            console.error('Online RSVP gagal:', response.status, response.statusText);
+            return false;
+        }
+
+        const result = await response.json();
+        if (result && result.success === false) {
+            console.error('Online RSVP response error:', result);
+            return false;
+        }
+
+        return true;
+    } catch (error) {
+        console.error('Error sending RSVP online:', error);
+        return false;
+    }
 }
 
 // Optional: Function to view all RSVPs (for admin purposes)
