@@ -1,5 +1,5 @@
 // RSVP Form Handling
-const RSVP_ENDPOINT = 'https://script.google.com/macros/s/AKfycbz7eNUc6KjB8wmbq3as0YFxtwAo8QhUUha0i9-r1eCkEWwQO0ltqNq91Sve6VwM0uUp/exec'; // Masukkan URL Google Apps Script atau endpoint server di sini
+const RSVP_ENDPOINT = 'https://script.google.com/macros/s/AKfycbz1kZLeI79nlfKENQ1_rQ5D6hjTNFQiKQ40TYUzmLfoSM6b0pNYt5ZtWjV-qNM0zraA/exec'; // Masukkan URL Google Apps Script atau endpoint server di sini
 
 document.addEventListener('DOMContentLoaded', function() {
     // Envelope opening animation
@@ -170,12 +170,12 @@ async function handleFormSubmit() {
         console.error('Error saving RSVP locally:', error);
     }
 
-    const isOnlineSaved = await sendRSVPDataOnline(data);
+    const onlineResult = await sendRSVPDataOnline(data);
 
-    if (isOnlineSaved) {
-        showSuccessMessage('online');
+    if (onlineResult.ok) {
+        showResultMessage('online');
     } else {
-        showSuccessMessage('offline');
+        showResultMessage('offline', onlineResult.reason);
     }
     
     // Reset form
@@ -185,20 +185,26 @@ async function handleFormSubmit() {
     document.getElementById('fullName').style.borderColor = '#e0e0e0';
 }
 
-// Show Success Message
-function showSuccessMessage(status = 'online') {
+// Show result message
+function showResultMessage(status = 'online', reason = '') {
     const formMessage = document.getElementById('formMessage');
     const fullName = document.getElementById('fullName').value;
     
-    const statusMessage = status === 'online'
-        ? 'Data Anda telah tersimpan secara online.'
-        : 'Data disimpan sebagai cadangan lokal. Coba lagi jika koneksi bermasalah.';
-
-    formMessage.innerHTML = `
-        <p>✓ Terima kasih, <strong>${fullName}</strong>!</p>
-        <p>Konfirmasi Anda telah diterima. ${statusMessage}</p>
-    `;
-    formMessage.classList.add('success');
+    if (status === 'online') {
+        formMessage.innerHTML = `
+            <p>✓ Terima kasih, <strong>${fullName}</strong>!</p>
+            <p>Data Anda telah tersimpan secara online.</p>
+        `;
+        formMessage.classList.add('success');
+    } else {
+        formMessage.innerHTML = `
+            <p>⚠️ Terima kasih, <strong>${fullName}</strong>.</p>
+            <p>Data Anda tersimpan sebagai cadangan lokal.</p>
+            <p><strong>Alasan:</strong> ${reason || 'Tidak dapat menghubungi server online.'}</p>
+            <p>Silakan periksa koneksi atau konfigurasi endpoint.</p>
+        `;
+        formMessage.classList.add('error');
+    }
 
     // Scroll to message
     setTimeout(() => {
@@ -210,24 +216,24 @@ function showSuccessMessage(status = 'online') {
 async function sendRSVPDataOnline(data) {
     if (!RSVP_ENDPOINT) {
         console.warn('RSVP endpoint tidak dikonfigurasi. Data hanya disimpan lokal.');
-        return false;
+        return { ok: false, reason: 'Endpoint belum dikonfigurasi.' };
     }
 
     try {
         console.log('Sending RSVP data to online endpoint:', data);
+        const formBody = new URLSearchParams(data);
         const response = await fetch(RSVP_ENDPOINT, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json',
                 'Accept': 'application/json'
             },
-            body: JSON.stringify(data)
+            body: formBody
         });
 
         if (!response.ok) {
             const text = await response.text();
             console.error('Online RSVP gagal:', response.status, response.statusText, text);
-            return false;
+            return { ok: false, reason: `Status ${response.status}: ${response.statusText}` };
         }
 
         let result;
@@ -236,19 +242,19 @@ async function sendRSVPDataOnline(data) {
         } catch (parseError) {
             const text = await response.text();
             console.error('Gagal membaca respon JSON dari endpoint:', parseError, text);
-            return false;
+            return { ok: false, reason: 'Respon server tidak valid (bukan JSON).' };
         }
 
         if (result && result.success === false) {
             console.error('Online RSVP response error:', result);
-            return false;
+            return { ok: false, reason: result.error || 'Server mengembalikan success=false.' };
         }
 
         console.log('Online RSVP berhasil:', result);
-        return true;
+        return { ok: true };
     } catch (error) {
         console.error('Error sending RSVP online:', error);
-        return false;
+        return { ok: false, reason: error.message || 'Kesalahan jaringan saat mengirim data.' };
     }
 }
 
