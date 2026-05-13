@@ -1,5 +1,5 @@
 // RSVP Form Handling
-const RSVP_ENDPOINT = 'https://script.google.com/macros/s/AKfycbz1kZLeI79nlfKENQ1_rQ5D6hjTNFQiKQ40TYUzmLfoSM6b0pNYt5ZtWjV-qNM0zraA/exec'; // Masukkan URL Google Apps Script atau endpoint server di sini
+const RSVP_ENDPOINT = 'https://script.google.com/macros/s/AKfycbwxGzjzdpxH09wDd76qzRx0Y4IPjHAT0B4JqL0YA_O-I9JZv8i6Zb-aCss9Y079G0E/exec'; // Masukkan URL Google Apps Script atau endpoint server di sini
  
 document.addEventListener('DOMContentLoaded', function() {
     // Envelope opening animation
