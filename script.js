@@ -1,5 +1,5 @@
 // RSVP Form Handling
-const RSVP_ENDPOINT = 'https://script.google.com/macros/s/AKfycbwxGzjzdpxH09wDd76qzRx0Y4IPjHAT0B4JqL0YA_O-I9JZv8i6Zb-aCss9Y079G0E/exec';
+const RSVP_ENDPOINT = 'https://script.google.com/macros/s/AKfycbwtYlY1JJl-3kzPWou523qWoKSmzgAGtn8COI6ZMGpy1Jbr-kBQ0Osi8ffLENu0wY2N/exec';
  
 let isSubmitting = false; // Mencegah spam tombol kirim
  
